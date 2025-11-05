@@ -9,11 +9,33 @@
     <div class="flex gap-2">
       <button
         type="button"
-        (click)="onDownload()"
+        (click)="onDownloadReport()"
         class="bg-blue-600 text-white p-2 rounded-md"
       >
         Download All Product Reports
       </button>
+      <button
+        type="button"
+        (click)="onDownloadSample()"
+        class="bg-blue-600 text-white p-2 rounded-md"
+      >
+        Download Sample CSV
+      </button>
+      <label
+        for="csvUpload"
+        class="bg-green-600 text-white p-2 rounded-md cursor-pointer"
+        title="Upload CSV"
+      >
+        Upload CSV
+      </label>
+      <input
+        type="file"
+        id="csvUpload"
+        accept=".csv"
+        class="hidden"
+        (change)="onCsvUpload($event)"
+      />
+
       <button
         type="button"
         class="bg-red-600 text-white p-2 rounded-md"

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   IAddProduct,
   ICategories,
+  ICreateBulkProduct,
   ICreateCategory,
   IEditCategory,
   IGetCategory,
@@ -136,5 +137,9 @@ export class ApiService {
         responseType: 'blob',
       });
     }
+  }
+
+  bulkCreateProduct(formdata: FormData): Observable<ICreateBulkProduct> {
+    return this.http.post<ICreateBulkProduct>('/product/bulk', formdata);
   }
 }

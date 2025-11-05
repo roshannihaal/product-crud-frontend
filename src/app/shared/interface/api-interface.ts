@@ -69,3 +69,7 @@ export interface IUpdateProduct {
 }
 
 export interface IAddProduct extends IUpdateProduct {}
+
+export interface ICreateBulkProduct {
+  message: string;
+}
