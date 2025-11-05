@@ -19,6 +19,7 @@ export class CategoriesComponent implements OnInit {
   categories: ICategoryData[] = [];
   sidebarVisible: boolean = false;
   action: 'add' | 'edit' | undefined;
+  searchItem: string = '';
 
   categoryForm: FormGroup = new FormGroup({
     id: new FormControl(''),
@@ -37,9 +38,11 @@ export class CategoriesComponent implements OnInit {
   }
 
   fetchCategories() {
-    this.apiService.getCategories(100, 0).subscribe((res: ICategories) => {
-      res.data.category.forEach((category) => this.categories.push(category));
-    });
+    this.apiService
+      .getCategories(100, 0, this.searchItem)
+      .subscribe((res: ICategories) => {
+        res.data.category.forEach((category) => this.categories.push(category));
+      });
   }
 
   onClickAddCategory() {
@@ -118,5 +121,16 @@ export class CategoriesComponent implements OnInit {
       this.categories = [];
       this.fetchCategories();
     });
+  }
+
+  onSearch() {
+    this.categories = [];
+    this.fetchCategories();
+  }
+
+  onClear() {
+    this.searchItem = '';
+    this.categories = [];
+    this.fetchCategories();
   }
 }

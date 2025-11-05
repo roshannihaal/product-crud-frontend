@@ -24,6 +24,7 @@ export class ProductsComponent implements OnInit {
   sidebarVisible: boolean = false;
   imageError: string | null = null;
   imagePreview: string | ArrayBuffer | null = null;
+  searchItem: string = '';
 
   productForm: FormGroup = new FormGroup({
     id: new FormControl(''),
@@ -52,9 +53,11 @@ export class ProductsComponent implements OnInit {
   }
 
   fetchProducts(id: string) {
-    this.apiService.getProducts(id, 100, 0).subscribe((res: IGetProducts) => {
-      res.data.product.forEach((product) => this.products.push(product));
-    });
+    this.apiService
+      .getProducts(id, 100, 0, this.searchItem)
+      .subscribe((res: IGetProducts) => {
+        res.data.product.forEach((product) => this.products.push(product));
+      });
   }
 
   onClickAddProduct() {
@@ -168,5 +171,19 @@ export class ProductsComponent implements OnInit {
         this.fetchProducts(this.category.id);
       }
     });
+  }
+  onSearch() {
+    this.products = [];
+    if (this.category) {
+      this.fetchProducts(this.category.id);
+    }
+  }
+
+  onClear() {
+    this.searchItem = '';
+    this.products = [];
+    if (this.category) {
+      this.fetchProducts(this.category.id);
+    }
   }
 }

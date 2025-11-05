@@ -3,13 +3,37 @@
     <h2 class="text-2xl font-semibold text-gray-700" *ngIf="category">
       {{ category.name }} - Products
     </h2>
-    <button
-      type="button"
-      class="bg-blue-600 text-white p-2 rounded-md"
-      (click)="onClickAddProduct()"
-    >
-      Add Product
-    </button>
+    <div class="flex gap-2 items-center">
+      <input
+        type="text"
+        [(ngModel)]="searchItem"
+        placeholder="Search categories..."
+        class="border border-gray-300 rounded-md px-3 py-2"
+      />
+
+      <button
+        type="button"
+        (click)="onSearch()"
+        class="bg-blue-600 text-white p-2 rounded-md"
+      >
+        Search
+      </button>
+      <button
+        type="button"
+        (click)="onClear()"
+        class="bg-blue-600 text-white p-2 rounded-md"
+      >
+        Clear
+      </button>
+
+      <button
+        type="button"
+        class="bg-green-600 text-white p-2 rounded-md"
+        (click)="onClickAddProduct()"
+      >
+        Add Product
+      </button>
+    </div>
   </div>
 
   <div
@@ -64,10 +88,9 @@
         </span>
       </div>
     </div>
-
-    <div *ngIf="!products.length" class="text-gray-500 mt-4">
-      No products found.
-    </div>
+  </div>
+  <div *ngIf="!products.length" class="text-gray-500 mt-4">
+    No products found.
   </div>
 </div>
 

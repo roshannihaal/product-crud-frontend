@@ -35,10 +35,15 @@ export class ApiService {
     this.router.navigate(['auth']);
   }
 
-  getCategories(limit: number, offset: number): Observable<ICategories> {
+  getCategories(
+    limit: number,
+    offset: number,
+    search: string
+  ): Observable<ICategories> {
     const params = {
       limit,
       offset,
+      search,
     };
     return this.http.get<ICategories>('/category/all', { params });
   }
@@ -62,12 +67,14 @@ export class ApiService {
   getProducts(
     category_id: string,
     limit: number,
-    offset: number
+    offset: number,
+    search: string
   ): Observable<IGetProducts> {
     const params = {
       category_id,
       limit,
       offset,
+      search,
     };
     return this.http.get<IGetProducts>('/product/all', { params });
   }
