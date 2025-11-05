@@ -224,4 +224,8 @@ export class ProductsComponent implements OnInit {
         });
     }
   }
+
+  onBack() {
+    this.router.navigate(['home']);
+  }
 }

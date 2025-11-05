@@ -1,6 +1,13 @@
 <div class="h-full flex flex-col">
   <div class="flex justify-between items-center mb-2">
-    <div class="flex gap-2">
+    <div class="flex gap-2 items-center">
+      <button
+        type="button"
+        (click)="onBack()"
+        class="bg-red-600 text-white p-2 rounded-md"
+      >
+        Back
+      </button>
       <h2 class="text-2xl font-semibold text-gray-700" *ngIf="category">
         {{ category.name }} - Products
       </h2>
