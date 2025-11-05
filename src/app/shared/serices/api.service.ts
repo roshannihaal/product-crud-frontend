@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
+  IAddProduct,
   ICategories,
   ICreateCategory,
   IEditCategory,
@@ -9,6 +10,7 @@ import {
   IGetProducts,
   ILogin,
   ISignup,
+  IUpdateProduct,
 } from '../interface/api-interface';
 import { Router } from '@angular/router';
 
@@ -84,7 +86,7 @@ export class ApiService {
     price: string;
     image: string;
     category_id: string;
-  }) {
+  }): Observable<IAddProduct> {
     const formData = new FormData();
     formData.append('name', body.name);
     formData.append('price', body.price);
@@ -93,7 +95,7 @@ export class ApiService {
     if (body.image) {
       formData.append('image', body.image);
     }
-    return this.http.post('/product', formData);
+    return this.http.post<IAddProduct>('/product', formData);
   }
 
   editProduct(
@@ -104,7 +106,7 @@ export class ApiService {
       image: string;
       category_id: string;
     }
-  ) {
+  ): Observable<IUpdateProduct> {
     const formData = new FormData();
     formData.append('name', body.name);
     formData.append('price', body.price);
@@ -113,7 +115,7 @@ export class ApiService {
     if (body.image) {
       formData.append('image', body.image);
     }
-    return this.http.put(`/product/${id}`, formData);
+    return this.http.put<IUpdateProduct>(`/product/${id}`, formData);
   }
 
   deleteProduct(id: string) {

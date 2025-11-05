@@ -3,10 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import {
+  IAddProduct,
   ICategoryData,
   IGetCategory,
   IGetProducts,
   IProductData,
+  IUpdateProduct,
 } from 'src/app/shared/interface/api-interface';
 import { ApiService } from 'src/app/shared/serices/api.service';
 import { environment } from 'src/environments/environment';
@@ -25,6 +27,9 @@ export class ProductsComponent implements OnInit {
   imageError: string | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   searchItem: string = '';
+  offset = 0;
+  limit = 20;
+  loading = false;
 
   productForm: FormGroup = new FormGroup({
     id: new FormControl(''),
@@ -54,9 +59,12 @@ export class ProductsComponent implements OnInit {
 
   fetchProducts(id: string) {
     this.apiService
-      .getProducts(id, 100, 0, this.searchItem)
+      .getProducts(id, this.limit, this.offset, this.searchItem)
       .subscribe((res: IGetProducts) => {
+        this.products = [...this.products];
         res.data.product.forEach((product) => this.products.push(product));
+        this.offset += res.data.product.length;
+        this.loading = false;
       });
   }
 
@@ -87,29 +95,32 @@ export class ProductsComponent implements OnInit {
   onCloseProduct() {
     this.sidebarVisible = false;
     this.productForm.reset();
+    this.imagePreview = null;
+    this.imageError = null;
   }
 
   onSubmit() {
     switch (this.action) {
       case 'add': {
-        this.apiService.addProduct(this.productForm.value).subscribe((res) => {
-          this.onCloseProduct();
-          this.products = [];
-          if (this.category) {
-            this.fetchProducts(this.category.id);
-          }
-        });
+        this.apiService
+          .addProduct(this.productForm.value)
+          .subscribe((res: IAddProduct) => {
+            this.onCloseProduct();
+            this.products.push(res.data.product);
+          });
         break;
       }
       case 'edit': {
         const { id, ...body } = this.productForm.value;
-        this.apiService.editProduct(id, body).subscribe((res) => {
-          this.onCloseProduct();
-          this.products = [];
-          if (this.category) {
-            this.fetchProducts(this.category.id);
-          }
-        });
+        this.apiService
+          .editProduct(id, body)
+          .subscribe((res: IUpdateProduct) => {
+            this.onCloseProduct();
+            const index = this.products.findIndex(
+              (product) => product.id === id
+            );
+            this.products[index] = res.data.product;
+          });
         break;
       }
     }
@@ -173,6 +184,9 @@ export class ProductsComponent implements OnInit {
     });
   }
   onSearch() {
+    this.offset = 0;
+    this.limit = 20;
+    this.loading = false;
     this.products = [];
     if (this.category) {
       this.fetchProducts(this.category.id);
@@ -180,8 +194,19 @@ export class ProductsComponent implements OnInit {
   }
 
   onClear() {
+    this.offset = 0;
+    this.limit = 20;
+    this.loading = false;
     this.searchItem = '';
     this.products = [];
+    if (this.category) {
+      this.fetchProducts(this.category.id);
+    }
+  }
+
+  onScroll() {
+    if (this.loading) return;
+    this.loading = true;
     if (this.category) {
       this.fetchProducts(this.category.id);
     }

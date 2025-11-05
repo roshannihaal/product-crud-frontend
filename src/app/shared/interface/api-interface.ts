@@ -60,3 +60,12 @@ export interface IGetProducts {
     product: IProductData[];
   };
 }
+
+export interface IUpdateProduct {
+  message: string;
+  data: {
+    product: IProductData;
+  };
+}
+
+export interface IAddProduct extends IUpdateProduct {}
