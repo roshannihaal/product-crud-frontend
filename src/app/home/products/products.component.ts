@@ -209,4 +209,19 @@ export class ProductsComponent implements OnInit {
       this.fetchProducts(this.category.id);
     }
   }
+
+  onDownload() {
+    if (this.category) {
+      this.apiService
+        .downloadProductReport(this.category.id)
+        .subscribe((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `product_${this.category?.id}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+    }
+  }
 }

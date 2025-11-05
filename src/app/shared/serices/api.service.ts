@@ -121,4 +121,20 @@ export class ApiService {
   deleteProduct(id: string) {
     return this.http.delete(`/product/${id}`);
   }
+
+  downloadProductReport(category_id: string = '') {
+    const params = {
+      category_id,
+    };
+    if (category_id) {
+      return this.http.get(`/product/download`, {
+        params,
+        responseType: 'blob',
+      });
+    } else {
+      return this.http.get(`/product/download`, {
+        responseType: 'blob',
+      });
+    }
+  }
 }
