@@ -1,0 +1,97 @@
+<div class="h-full flex flex-col">
+  <div class="flex justify-between items-center mb-2">
+    <h2 class="text-2xl font-semibold text-gray-700">Categories</h2>
+    <button
+      type="button"
+      class="bg-blue-600 text-white p-2 rounded-md"
+      (click)="onClickAddCategory()"
+    >
+      Add Category
+    </button>
+  </div>
+
+  <div
+    *ngIf="categories.length"
+    class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 h-[80vh] overflow-auto auto-rows-min"
+  >
+    <div
+      *ngFor="let category of categories"
+      class="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-4 flex flex-col shadow-sm cursor-pointer"
+      (click)="onOpenCategory(category)"
+    >
+      <span class="text-gray-800 font-medium">{{ category.name }}</span>
+      <div class="">
+        <div class="flex gap-2 mt-4 justify-end">
+          <button
+            type="button"
+            class="bg-yellow-500 text-white px-3 py-1 rounded-md"
+            (click)="onClickEditCategory(category)"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="bg-red-500 text-white px-3 py-1 rounded-md"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      <div class="flex justify-between gap-1 mt-2">
+        <span class="text-gray-500 text-sm">
+          Created at: {{ category.created_at | date : "dd MMM yyyy" }}
+        </span>
+        <span class="text-gray-500 text-sm">
+          Updated at: {{ category.updated_at | date : "dd MMM yyyy" }}
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="!categories.length" class="text-gray-500 mt-4">
+      No categories found.
+    </div>
+  </div>
+</div>
+
+<p-sidebar [(visible)]="sidebarVisible" (onHide)="onCloseCategory()">
+  <div class="w-full flex justify-center">
+    <ng-container *ngIf="action === 'add'; else edit">
+      <h2 class="text-2xl font-semibold text-gray-700">Add Category</h2>
+    </ng-container>
+    <ng-template #edit>
+      <h2 class="text-2xl font-semibold text-gray-700">Edit Category</h2>
+    </ng-template>
+  </div>
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div>
+      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+        Name
+      </label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        class="w-full border border-gray-300 p-2 rounded-md"
+      />
+
+      <p
+        *ngIf="
+          categoryForm.get('name')?.touched && categoryForm.get('name')?.errors
+        "
+        class="text-red-500 text-sm mt-1"
+      >
+        <span *ngIf="categoryForm.get('name')?.errors?.['required']">
+          name is required.
+        </span>
+      </p>
+    </div>
+    <button
+      type="submit"
+      [disabled]="categoryForm.invalid"
+      class="w-full bg-blue-600 text-white py-2 rounded-md disabled:bg-gray-400"
+    >
+      <ng-container *ngIf="action === 'add'; else editBtn">Add </ng-container>
+      <ng-template #editBtn>Edit </ng-template>
+    </button>
+  </form>
+</p-sidebar>

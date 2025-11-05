@@ -1,0 +1,131 @@
+<div class="h-full flex flex-col">
+  <div class="flex justify-between items-center mb-2">
+    <h2 class="text-2xl font-semibold text-gray-700" *ngIf="category">
+      {{ category.name }} - Products
+    </h2>
+    <button
+      type="button"
+      class="bg-blue-600 text-white p-2 rounded-md"
+      (click)="onClickAddProduct()"
+    >
+      Add Product
+    </button>
+  </div>
+
+  <div
+    *ngIf="products.length"
+    class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 h-[80vh] overflow-auto auto-rows-min"
+  >
+    <div
+      *ngFor="let product of products"
+      class="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-4 flex flex-col shadow-sm cursor-pointer"
+    >
+      <img
+        *ngIf="product.image"
+        [src]="backend_url + '/' + product.image"
+        alt="{{ product.name }}"
+        class="w-full h-40 object-cover rounded-md mb-2"
+      />
+      <img
+        *ngIf="!product.image"
+        src="../../../assets/products.png"
+        alt="{{ product.name }}"
+        class="w-full h-40 object-cover rounded-md mb-2"
+      />
+
+      <div class="flex justify-between">
+        <span class="text-gray-800 font-medium">{{ product.name }}</span>
+        <span class="text-gray-800 font-medium">${{ product.price }}</span>
+      </div>
+
+      <div class="flex gap-2 mt-4 justify-end">
+        <button
+          type="button"
+          class="bg-yellow-500 text-white px-3 py-1 rounded-md"
+          (click)="onClickEditProduct(product)"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          class="bg-red-500 text-white px-3 py-1 rounded-md"
+        >
+          Delete
+        </button>
+      </div>
+
+      <div class="flex justify-between gap-1 mt-2">
+        <span class="text-gray-500 text-sm">
+          Created at: {{ product.created_at | date : "dd MMM yyyy" }}
+        </span>
+        <span class="text-gray-500 text-sm">
+          Updated at: {{ product.updated_at | date : "dd MMM yyyy" }}
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="!products.length" class="text-gray-500 mt-4">
+      No products found.
+    </div>
+  </div>
+</div>
+
+<p-sidebar [(visible)]="sidebarVisible" (onHide)="onCloseProduct()">
+  <div class="w-full flex justify-center">
+    <ng-container *ngIf="action === 'add'; else edit">
+      <h2 class="text-2xl font-semibold text-gray-700">Add Product</h2>
+    </ng-container>
+    <ng-template #edit>
+      <h2 class="text-2xl font-semibold text-gray-700">Edit Product</h2>
+    </ng-template>
+  </div>
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div>
+      <label class="block font-medium text-gray-700">Name</label>
+      <input
+        type="text"
+        formControlName="name"
+        class="mt-1 block w-full border rounded p-2"
+      />
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-700">Price</label>
+      <input
+        type="number"
+        formControlName="price"
+        class="mt-1 block w-full border rounded p-2"
+      />
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-700">Image</label>
+      <input
+        type="file"
+        accept=".jpg,.jpeg,.png"
+        (change)="onFileSelected($event)"
+        class="mt-1 block w-full border rounded p-2"
+      />
+      <div *ngIf="imageError" class="text-red-500 text-sm mt-1">
+        {{ imageError }}
+      </div>
+    </div>
+
+    <div *ngIf="imagePreview" class="mt-2">
+      <span class="text-gray-700 font-medium">Preview:</span>
+      <img
+        [src]="imagePreview"
+        alt="Image Preview"
+        class="mt-1 w-full h-48 object-contain border rounded"
+      />
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="productForm.invalid || imageError"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Submit
+    </button>
+  </form>
+</p-sidebar>

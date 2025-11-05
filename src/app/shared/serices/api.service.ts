@@ -1,7 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ILogin, ISignup } from '../interface/api-interface';
+import {
+  ICategories,
+  ICreateCategory,
+  IEditCategory,
+  IGetCategory,
+  IGetProducts,
+  ILogin,
+  ISignup,
+} from '../interface/api-interface';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +27,75 @@ export class ApiService {
 
   login(body: { email: string; password: string }): Observable<ILogin> {
     return this.http.post<ILogin>('/auth/login', body);
+  }
+
+  getCategories(limit: number, offset: number): Observable<ICategories> {
+    const params = {
+      limit,
+      offset,
+    };
+    return this.http.get<ICategories>('/category/all', { params });
+  }
+
+  getCategory(id: string): Observable<IGetCategory> {
+    return this.http.get<IGetCategory>(`/category/${id}`);
+  }
+
+  addCategory(body: { name: string }): Observable<ICreateCategory> {
+    return this.http.post<ICreateCategory>('/category', body);
+  }
+
+  editCategory(id: string, body: { name: string }): Observable<IEditCategory> {
+    return this.http.put<IEditCategory>(`/category/${id}`, body);
+  }
+
+  getProducts(
+    category_id: string,
+    limit: number,
+    offset: number
+  ): Observable<IGetProducts> {
+    const params = {
+      category_id,
+      limit,
+      offset,
+    };
+    return this.http.get<IGetProducts>('/product/all', { params });
+  }
+
+  addProduct(body: {
+    name: string;
+    price: string;
+    image: string;
+    category_id: string;
+  }) {
+    const formData = new FormData();
+    formData.append('name', body.name);
+    formData.append('price', body.price);
+    formData.append('category_id', body.category_id);
+
+    if (body.image) {
+      formData.append('image', body.image);
+    }
+    return this.http.post('/product', formData);
+  }
+
+  editProduct(
+    id: string,
+    body: {
+      name: string;
+      price: string;
+      image: string;
+      category_id: string;
+    }
+  ) {
+    const formData = new FormData();
+    formData.append('name', body.name);
+    formData.append('price', body.price);
+    formData.append('category_id', body.category_id);
+
+    if (body.image) {
+      formData.append('image', body.image);
+    }
+    return this.http.put(`/product/${id}`, formData);
   }
 }

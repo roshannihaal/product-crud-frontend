@@ -28,6 +28,18 @@ export class AuthInterceptor implements HttpInterceptor {
       url: environment.BACKEND_URL + '/api' + request.url,
     });
 
+    const no_auth = ['/auth/signup', '/auth/login'];
+    if (!no_auth.includes(request.url)) {
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        request = request.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+    }
+
     return new Observable((observer) => {
       const subscription = next.handle(request).subscribe({
         next: (event) => {
