@@ -1,0 +1,29 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white shadow-lg rounded-2xl w-full max-w-md p-8">
+    <ng-container *ngIf="isLogin; else signupHeader">
+      <h1 class="text-2xl font-semibold text-center mb-6 text-gray-800">
+        Login
+      </h1>
+    </ng-container>
+    <ng-template #signupHeader>
+      <h1 class="text-2xl font-semibold text-center mb-6 text-gray-800">
+        Create Account
+      </h1>
+    </ng-template>
+
+    <router-outlet></router-outlet>
+
+    <div class="mt-6 text-center text-sm text-gray-600">
+      <ng-container *ngIf="isLogin; else signup">
+        Don’t have an account?
+        <a routerLink="/auth/signup" class="text-blue-600 underline">
+          Sign up
+        </a>
+      </ng-container>
+      <ng-template #signup>
+        Already have an account?
+        <a routerLink="/auth/login" class="text-blue-600 underline"> Log in </a>
+      </ng-template>
+    </div>
+  </div>
+</div>
