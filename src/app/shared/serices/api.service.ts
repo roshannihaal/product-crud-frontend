@@ -10,9 +10,11 @@ import {
   IGetCategory,
   IGetProducts,
   ILogin,
+  IPublicKey,
   ISignup,
   IUpdateProduct,
 } from '../interface/api-interface';
+import { JSEncrypt } from 'jsencrypt';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -21,16 +23,39 @@ import { Router } from '@angular/router';
 export class ApiService {
   constructor(private http: HttpClient, private router: Router) {}
 
-  signup(body: {
-    email: string;
-    password: string;
-    confirm_password: string;
-  }): Observable<ISignup> {
-    return this.http.post<ISignup>('/auth/signup', body);
+  publicKey(): Observable<IPublicKey> {
+    return this.http.get<IPublicKey>('/auth/public-key');
   }
 
-  login(body: { email: string; password: string }): Observable<ILogin> {
-    return this.http.post<ILogin>('/auth/login', body);
+  signup(
+    body: {
+      email: string;
+      password: string;
+      confirm_password: string;
+    },
+    public_key: string
+  ): Observable<ISignup> {
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(public_key);
+    const ecryptedBody = {
+      email: encryptor.encrypt(body.email),
+      password: encryptor.encrypt(body.password),
+      confirm_password: encryptor.encrypt(body.confirm_password),
+    };
+    return this.http.post<ISignup>('/auth/signup', ecryptedBody);
+  }
+
+  login(
+    body: { email: string; password: string },
+    public_key: string
+  ): Observable<ILogin> {
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(public_key);
+    const ecryptedBody = {
+      email: encryptor.encrypt(body.email),
+      password: encryptor.encrypt(body.password),
+    };
+    return this.http.post<ILogin>('/auth/login', ecryptedBody);
   }
 
   logout() {

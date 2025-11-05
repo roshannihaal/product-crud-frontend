@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/shared/serices/api.service';
-import { ISignup } from 'src/app/shared/interface/api-interface';
+import { IPublicKey, ISignup } from 'src/app/shared/interface/api-interface';
 import { Router } from '@angular/router';
 
 @Component({
@@ -27,9 +27,13 @@ export class SignupComponent {
   constructor(private apiService: ApiService, private router: Router) {}
 
   onSubmit() {
-    this.apiService.signup(this.signupForm.value).subscribe((res: ISignup) => {
-      sessionStorage.setItem('token', res.data.token);
-      this.router.navigate(['home']);
+    this.apiService.publicKey().subscribe((res: IPublicKey) => {
+      this.apiService
+        .signup(this.signupForm.value, res.data.public_key)
+        .subscribe((res: ISignup) => {
+          sessionStorage.setItem('token', res.data.token);
+          this.router.navigate(['home']);
+        });
     });
   }
 }

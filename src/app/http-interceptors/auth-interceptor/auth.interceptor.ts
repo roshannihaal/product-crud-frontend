@@ -28,7 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
       url: environment.BACKEND_URL + '/api' + request.url,
     });
 
-    const no_auth = ['/auth/signup', '/auth/login'];
+    const no_auth = ['/auth/signup', '/auth/login', '/auth/public-key'];
     if (!no_auth.includes(request.url)) {
       const token = sessionStorage.getItem('token');
       if (token) {

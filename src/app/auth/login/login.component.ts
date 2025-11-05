@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ILogin } from 'src/app/shared/interface/api-interface';
+import { ILogin, IPublicKey } from 'src/app/shared/interface/api-interface';
 import { ApiService } from 'src/app/shared/serices/api.service';
 
 @Component({
@@ -18,9 +18,13 @@ export class LoginComponent {
   constructor(private apiService: ApiService, private router: Router) {}
 
   onSubmit() {
-    this.apiService.login(this.loginForm.value).subscribe((res: ILogin) => {
-      sessionStorage.setItem('token', res.data.token);
-      this.router.navigate(['home']);
+    this.apiService.publicKey().subscribe((res: IPublicKey) => {
+      this.apiService
+        .login(this.loginForm.value, res.data.public_key)
+        .subscribe((res: ILogin) => {
+          sessionStorage.setItem('token', res.data.token);
+          this.router.navigate(['home']);
+        });
     });
   }
 }

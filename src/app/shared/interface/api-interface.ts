@@ -73,3 +73,10 @@ export interface IAddProduct extends IUpdateProduct {}
 export interface ICreateBulkProduct {
   message: string;
 }
+
+export interface IPublicKey {
+  message: string;
+  data: {
+    public_key: string;
+  };
+}
