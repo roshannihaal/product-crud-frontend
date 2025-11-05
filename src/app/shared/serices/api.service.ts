@@ -96,13 +96,17 @@ export class ApiService {
     category_id: string,
     limit: number,
     offset: number,
-    search: string
+    search: string,
+    sort_by: string,
+    sort_order: string
   ): Observable<IGetProducts> {
     const params = {
       category_id,
       limit,
       offset,
       search,
+      sort_by,
+      sort_order,
     };
     return this.http.get<IGetProducts>('/product/all', { params });
   }

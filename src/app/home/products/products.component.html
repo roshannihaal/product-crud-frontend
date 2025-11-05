@@ -43,6 +43,15 @@
         Clear
       </button>
 
+      <p-dropdown
+        [options]="sortOptions"
+        [(ngModel)]="selectedSort"
+        optionLabel="label"
+        placeholder="Sort by"
+        (onChange)="onSortChange()"
+        class="border boder-1 rounded-md"
+      ></p-dropdown>
+
       <button
         type="button"
         class="bg-green-600 text-white p-2 rounded-md"

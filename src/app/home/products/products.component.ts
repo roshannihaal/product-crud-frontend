@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, SelectItem } from 'primeng/api';
 import {
   IAddProduct,
   ICategoryData,
@@ -12,6 +12,7 @@ import {
 } from 'src/app/shared/interface/api-interface';
 import { ApiService } from 'src/app/shared/serices/api.service';
 import { environment } from 'src/environments/environment';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-products',
@@ -30,6 +31,13 @@ export class ProductsComponent implements OnInit {
   offset = 0;
   limit = 20;
   loading = false;
+  sortOptions: SelectItem[] = [];
+  selectedSort: SelectItem = {
+    label: 'Created Date ↑',
+    value: { field: 'created_at', order: 'asc' },
+  };
+  sortBy: string = 'created_at';
+  sortOrder: 'asc' | 'desc' = 'asc';
 
   productForm: FormGroup = new FormGroup({
     id: new FormControl(''),
@@ -46,6 +54,15 @@ export class ProductsComponent implements OnInit {
     private confirmationService: ConfirmationService
   ) {}
   ngOnInit(): void {
+    this.sortOptions = [
+      { label: 'Price ↑', value: { field: 'price', order: 'asc' } },
+      { label: 'Price ↓', value: { field: 'price', order: 'desc' } },
+      { label: 'Created Date ↑', value: { field: 'created_at', order: 'asc' } },
+      {
+        label: 'Created Date ↓',
+        value: { field: 'created_at', order: 'desc' },
+      },
+    ];
     const categoryId = this.route.snapshot.paramMap.get('id')!;
     this.fetchCategory(categoryId);
     this.fetchProducts(categoryId);
@@ -59,7 +76,14 @@ export class ProductsComponent implements OnInit {
 
   fetchProducts(id: string) {
     this.apiService
-      .getProducts(id, this.limit, this.offset, this.searchItem)
+      .getProducts(
+        id,
+        this.limit,
+        this.offset,
+        this.searchItem,
+        this.sortBy,
+        this.sortOrder
+      )
       .subscribe((res: IGetProducts) => {
         this.products = [...this.products];
         res.data.product.forEach((product) => this.products.push(product));
@@ -107,6 +131,7 @@ export class ProductsComponent implements OnInit {
           .subscribe((res: IAddProduct) => {
             this.onCloseProduct();
             this.products.push(res.data.product);
+            this.offset += 1;
           });
         break;
       }
@@ -120,6 +145,14 @@ export class ProductsComponent implements OnInit {
               (product) => product.id === id
             );
             this.products[index] = res.data.product;
+
+            if (this.sortBy === 'price') {
+              this.products = _.orderBy(
+                this.products,
+                [this.sortBy],
+                [this.sortOrder]
+              );
+            }
           });
         break;
       }
@@ -227,5 +260,18 @@ export class ProductsComponent implements OnInit {
 
   onBack() {
     this.router.navigate(['home']);
+  }
+
+  onSortChange() {
+    if (!this.selectedSort) return;
+
+    this.sortBy = this.selectedSort.value.field;
+    this.sortOrder = this.selectedSort.value.order;
+
+    this.offset = 0;
+    this.products = [];
+    if (this.category) {
+      this.fetchProducts(this.category.id);
+    }
   }
 }
