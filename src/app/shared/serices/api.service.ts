@@ -10,12 +10,13 @@ import {
   ILogin,
   ISignup,
 } from '../interface/api-interface';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   signup(body: {
     email: string;
@@ -27,6 +28,11 @@ export class ApiService {
 
   login(body: { email: string; password: string }): Observable<ILogin> {
     return this.http.post<ILogin>('/auth/login', body);
+  }
+
+  logout() {
+    sessionStorage.removeItem('token');
+    this.router.navigate(['auth']);
   }
 
   getCategories(limit: number, offset: number): Observable<ICategories> {
@@ -47,6 +53,10 @@ export class ApiService {
 
   editCategory(id: string, body: { name: string }): Observable<IEditCategory> {
     return this.http.put<IEditCategory>(`/category/${id}`, body);
+  }
+
+  deleteCategory(id: string) {
+    return this.http.delete(`/category/${id}`);
   }
 
   getProducts(
@@ -97,5 +107,9 @@ export class ApiService {
       formData.append('image', body.image);
     }
     return this.http.put(`/product/${id}`, formData);
+  }
+
+  deleteProduct(id: string) {
+    return this.http.delete(`/product/${id}`);
   }
 }

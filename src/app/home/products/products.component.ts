@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
 import {
   ICategoryData,
   IGetCategory,
@@ -35,7 +36,8 @@ export class ProductsComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private confirmationService: ConfirmationService
   ) {}
   ngOnInit(): void {
     const categoryId = this.route.snapshot.paramMap.get('id')!;
@@ -137,5 +139,34 @@ export class ProductsComponent implements OnInit {
       this.imagePreview = reader.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  onClickDeleteProduct(event: Event, product: IProductData) {
+    event.stopPropagation();
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Are you sure want to delete ${product.name}?`,
+      header: `Delete ${product.name}`,
+      icon: 'none',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      acceptButtonStyleClass:
+        'bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600',
+      rejectButtonStyleClass:
+        'bg-gray-300 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-400',
+      accept: () => {
+        this.deleteProduct(product);
+      },
+      reject: () => {},
+    });
+  }
+
+  deleteProduct(product: IProductData) {
+    this.apiService.deleteProduct(product.id).subscribe((res) => {
+      this.products = [];
+      if (this.category) {
+        this.fetchProducts(this.category.id);
+      }
+    });
   }
 }

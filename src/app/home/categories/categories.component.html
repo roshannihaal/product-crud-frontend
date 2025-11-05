@@ -25,13 +25,14 @@
           <button
             type="button"
             class="bg-yellow-500 text-white px-3 py-1 rounded-md"
-            (click)="onClickEditCategory(category)"
+            (click)="onClickEditCategory(category); $event.stopPropagation()"
           >
             Edit
           </button>
           <button
             type="button"
             class="bg-red-500 text-white px-3 py-1 rounded-md"
+            (click)="onClickDeleteCategory($event, category)"
           >
             Delete
           </button>
@@ -95,3 +96,5 @@
     </button>
   </form>
 </p-sidebar>
+
+<p-confirmDialog #cd />

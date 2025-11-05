@@ -49,6 +49,7 @@
         <button
           type="button"
           class="bg-red-500 text-white px-3 py-1 rounded-md"
+          (click)="onClickDeleteProduct($event, product)"
         >
           Delete
         </button>
@@ -129,3 +130,5 @@
     </button>
   </form>
 </p-sidebar>
+
+<p-confirmDialog />

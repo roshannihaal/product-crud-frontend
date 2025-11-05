@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
 import {
   ICategories,
   ICategoryData,
@@ -27,7 +28,8 @@ export class CategoriesComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +90,33 @@ export class CategoriesComponent implements OnInit {
   onOpenCategory(category: ICategoryData) {
     this.router.navigate(['..', 'category', category.id], {
       relativeTo: this.route,
+    });
+  }
+
+  onClickDeleteCategory(event: Event, category: ICategoryData) {
+    event.stopPropagation();
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Are you sure? All the products of ${category.name} will be deleted too.`,
+      header: `Delete ${category.name}`,
+      icon: 'none',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      acceptButtonStyleClass:
+        'bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600',
+      rejectButtonStyleClass:
+        'bg-gray-300 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-400',
+      accept: () => {
+        this.deleteCategory(category);
+      },
+      reject: () => {},
+    });
+  }
+
+  deleteCategory(category: ICategoryData) {
+    this.apiService.deleteCategory(category.id).subscribe((res) => {
+      this.categories = [];
+      this.fetchCategories();
     });
   }
 }

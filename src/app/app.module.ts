@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { httpInterceptorProviders } from './http-interceptors';
+import { ConfirmationService, MessageService } from 'primeng/api';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -13,7 +14,7 @@ import { httpInterceptorProviders } from './http-interceptors';
     AppRoutingModule,
     HttpClientModule,
   ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, ConfirmationService, MessageService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
