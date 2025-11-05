@@ -177,10 +177,8 @@ export class ProductsComponent implements OnInit {
 
   deleteProduct(product: IProductData) {
     this.apiService.deleteProduct(product.id).subscribe((res) => {
-      this.products = [];
-      if (this.category) {
-        this.fetchProducts(this.category.id);
-      }
+      this.products = this.products.filter((prod) => prod.id !== product.id);
+      this.offset = Math.max(0, this.offset - 1);
     });
   }
   onSearch() {

@@ -126,8 +126,8 @@ export class CategoriesComponent implements OnInit {
 
   deleteCategory(category: ICategoryData) {
     this.apiService.deleteCategory(category.id).subscribe((res) => {
-      this.categories = [];
-      this.fetchCategories();
+      this.categories = this.categories.filter((cat) => cat.id !== category.id);
+      this.offset = Math.max(0, this.offset - 1);
     });
   }
 
