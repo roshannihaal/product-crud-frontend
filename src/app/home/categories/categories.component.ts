@@ -20,6 +20,9 @@ export class CategoriesComponent implements OnInit {
   sidebarVisible: boolean = false;
   action: 'add' | 'edit' | undefined;
   searchItem: string = '';
+  offset = 0;
+  limit = 20;
+  loading = false;
 
   categoryForm: FormGroup = new FormGroup({
     id: new FormControl(''),
@@ -39,9 +42,12 @@ export class CategoriesComponent implements OnInit {
 
   fetchCategories() {
     this.apiService
-      .getCategories(100, 0, this.searchItem)
+      .getCategories(this.limit, this.offset, this.searchItem)
       .subscribe((res: ICategories) => {
+        this.categories = [...this.categories];
         res.data.category.forEach((category) => this.categories.push(category));
+        this.offset += res.data.category.length;
+        this.loading = false;
       });
   }
 
@@ -71,8 +77,8 @@ export class CategoriesComponent implements OnInit {
           .addCategory(this.categoryForm.value)
           .subscribe((res: ICreateCategory) => {
             this.onCloseCategory();
-            this.categories = [];
-            this.fetchCategories();
+            this.categories.push(res.data.category);
+            this.offset += 1;
           });
         break;
       }
@@ -82,8 +88,10 @@ export class CategoriesComponent implements OnInit {
           .editCategory(id, body)
           .subscribe((res: IEditCategory) => {
             this.onCloseCategory();
-            this.categories = [];
-            this.fetchCategories();
+            const index = this.categories.findIndex(
+              (category) => category.id === id
+            );
+            this.categories[index] = res.data.category;
           });
         break;
       }
@@ -124,13 +132,25 @@ export class CategoriesComponent implements OnInit {
   }
 
   onSearch() {
+    this.offset = 0;
+    this.limit = 20;
+    this.loading = false;
     this.categories = [];
     this.fetchCategories();
   }
 
   onClear() {
+    this.offset = 0;
+    this.limit = 20;
+    this.loading = false;
     this.searchItem = '';
     this.categories = [];
+    this.fetchCategories();
+  }
+
+  onScroll() {
+    if (this.loading) return;
+    this.loading = true;
     this.fetchCategories();
   }
 }

@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { httpInterceptorProviders } from './http-interceptors';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -13,6 +14,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
+    InfiniteScrollModule,
   ],
   providers: [httpInterceptorProviders, ConfirmationService, MessageService],
   bootstrap: [AppComponent],
